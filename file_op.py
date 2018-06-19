@@ -9,8 +9,11 @@ def count_code(path):
     for filename in path_list:
         if os.path.isfile(path + '/' + filename):
             if filename.endswith('.py'):    # 用 endswith() 代替 in ，精确匹配，解决读取到 .pyc 文件时的编码报错问题
-                print(filename + ' ' + get_encoding(path + '/' + filename))
-                f = codecs.open(path + '/' + filename, encoding = get_encoding(path + '/' + filename))
+                encoding =  get_encoding(path + '/' + filename)
+                if encoding is None:
+                    encoding = 'utf-8'
+                print(filename + ' ' + encoding)
+                f = codecs.open(path + '/' + filename, encoding = encoding)
                 k = 0
                 for line in f.readlines():
                     line = line.strip()
@@ -96,7 +99,7 @@ def count_all(path):
 
     return i    # 递归迭代函数中，return 用于从函数内部传递返回值出来；位置决定递归函数的返回结束！
 
-
+# bug:如果文件为空, 返回时NoneType
 def get_encoding(file):
     with open(file, 'rb') as f:
         return chardet.detect(f.read())['encoding']
