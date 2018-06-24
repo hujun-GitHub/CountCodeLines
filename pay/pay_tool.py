@@ -1,6 +1,8 @@
 import wx
 import codecs
 import os
+import git
+import socket
 import sys
 sys.path.append("..")
 import file_op
@@ -17,7 +19,7 @@ class PayFrame(wx.Frame):
         self.SetStatusText("欢迎来到python世界!")
 
     def make_main_ui(self):
-        # 遍历以data开头的txt文件（以后这个是要改的），展示所有程序员push代码的记录。
+        # 遍历以ccl文件（以后这个是要改的），展示所有程序员push代码的记录。
         upper_folder = os.path.abspath(os.path.join(os.getcwd(), ".."))
         index_line = 0
         cost_money = 0
@@ -25,7 +27,7 @@ class PayFrame(wx.Frame):
         print(upper_folder)
         wx.StaticText(self.pnl, label="成员\t\t\t\t年\t\t月\t\t日\t\t空白行\t\t注释行\t\t代码行\t\t是否付款", pos=(30, 80), size=(850, 30))
         for filename in os.listdir(upper_folder):
-            if os.path.isfile(upper_folder + '/' + filename) and 'data' in filename:
+            if os.path.isfile(upper_folder + '/' + filename) and filename.endswith('.ccl'):
                 f = codecs.open(upper_folder + '/' + filename, 'r',
                                 encoding=file_op.get_encoding(upper_folder + '/' + filename))
                 f.seek(0)
@@ -141,3 +143,4 @@ if __name__ == '__main__':
     frm = PayFrame(None, title='支付小工具')
     frm.Show()
     app.MainLoop()
+

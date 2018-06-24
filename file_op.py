@@ -12,7 +12,7 @@ def count_code(path):
                 encoding =  get_encoding(path + '/' + filename)
                 if encoding is None:
                     encoding = 'utf-8'
-                print(filename + ' ' + encoding)
+                #print(filename + ' ' + encoding)
                 f = codecs.open(path + '/' + filename, encoding = encoding)
                 k = 0
                 for line in f.readlines():
@@ -20,14 +20,13 @@ def count_code(path):
                     if not line.startswith('#') and len(line):
                         k += 1
                 i += k
-                print(str(k) + '行')
+                #print(str(k) + '行')
 
         if os.path.isdir(path + '/' + filename):
             current_path = path + '/' + filename
             j = count_code(current_path)
             if j:
                 i = i + j
-
     return i    # 递归迭代函数中，return 用于从函数内部传递返回值出来；位置决定递归函数的返回结束！
 
 
@@ -38,7 +37,7 @@ def count_newline(path):
     for filename in path_list:
         if os.path.isfile(path + '/' + filename):
             if filename.endswith('.py'):    # 用 endswith() 代替 in ，精确匹配，解决读取到 .pyc 文件时的编码报错问题
-                print(filename + ' ' + get_encoding(path + '/' + filename))
+                #print(filename + ' ' + get_encoding(path + '/' + filename))
                 f = codecs.open(path + '/' + filename, encoding = get_encoding(path + '/' + filename))
                 k = 0
                 for line in f.readlines():
@@ -46,7 +45,7 @@ def count_newline(path):
                     if not len(line):
                         k += 1
                 i += k
-                print(str(k) + '行')
+                #print(str(k) + '行')
         if os.path.isdir(path + '/' + filename):
             current_path = path + '/' + filename
             j = count_newline(current_path)
@@ -62,7 +61,7 @@ def count_comment(path):
     for filename in path_list:
         if os.path.isfile(path + '/' + filename):
             if filename.endswith('.py'):    # 用 endswith() 代替 in ，精确匹配，解决读取到 .pyc 文件时的编码报错问题
-                print(filename + ' ' + get_encoding(path + '/' + filename))
+                #print(filename + ' ' + get_encoding(path + '/' + filename))
                 f = codecs.open(path + '/' + filename, encoding = get_encoding(path + '/' + filename))
                 k = 0
                 for line in f.readlines():
@@ -71,7 +70,7 @@ def count_comment(path):
                         k += 1
                 i += k
 
-                print(str(k) + '行')
+                #print(str(k) + '行')
         if os.path.isdir(path + '/' + filename):
             current_path = path + '/' + filename
             j = count_comment(current_path)
@@ -86,10 +85,10 @@ def count_all(path):
     for filename in path_list:
         if os.path.isfile(path + '/' + filename):
             if filename.endswith('.py'):    # 用 endswith() 代替 in ，精确匹配，解决读取到 .pyc 文件时的编码报错问题
-                print(filename + ' ' + get_encoding(path + '/' + filename))
+                #print(filename + ' ' + get_encoding(path + '/' + filename))
                 f = codecs.open(path + '/' + filename, encoding = get_encoding(path + '/' + filename))
                 k = len(f.readlines())
-                print(str(k) + '行')
+                #print(str(k) + '行')
                 i += k
         if os.path.isdir(path + '/' + filename):
             current_path = path + '/' + filename
