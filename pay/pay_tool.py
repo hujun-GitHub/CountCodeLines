@@ -1,12 +1,11 @@
 import wx
 import codecs
 import os
-import git
-import socket
 import sys
 sys.path.append("..")
 import file_op
-
+import test
+import urllib
 
 class PayFrame(wx.Frame):
     def __init__(self, *args, **kw):
@@ -94,10 +93,16 @@ class PayFrame(wx.Frame):
         wx.MessageBox("This is a wxPython Hello World sample!", "About Hello World 2", wx.OK | wx.ICON_INFORMATION)
 
     def on_pay(self, event):
+        app = test.App()
+        app.MainLoop()
+
+
+    def on_pay_(self, event):
 
         if not self.validate_pay():
-
             return
+
+
 
         line = event.EventObject.GetName()
         arr_line = line.split("\t")
@@ -138,9 +143,12 @@ class PayFrame(wx.Frame):
             return False
         return True
 
+
+
 if __name__ == '__main__':
     app = wx.App()
     frm = PayFrame(None, title='支付小工具')
     frm.Show()
     app.MainLoop()
+    #urllib.request.urlretrieve('http://120.78.227.227/static/upload/5B75C22E-39BF-4011-B66D-3D070FB75167.jpeg',filename='./images/5B75C22E-39BF-4011-B66D-3D070FB75167.jpeg')
 
