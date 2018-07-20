@@ -131,3 +131,6 @@ def get_host_name():
         hostname = hostname.replace('.local', '')
     print('程序员主机名:' + hostname)
     return hostname
+
+def is_file_exist(file_path):
+    return os.path.exists(file_path)

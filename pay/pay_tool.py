@@ -7,6 +7,7 @@ import file_op
 import test
 import urllib
 
+
 class PayFrame(wx.Frame):
     def __init__(self, *args, **kw):
         super(PayFrame, self).__init__(*args, **kw, size=(1000,500))
