@@ -74,3 +74,33 @@ def count_ccl(ccl_file_curr_user, git_base_path, suffix):
                     ccl_comment_total += int(col[4])
                     ccl_code_total += int(col[5])
     return ccl_code_total, ccl_comment_total, ccl_newline_total
+
+
+def modify_after_pay(line):
+    print('ccl_op.modify_after_pay:' + line)
+    arr_line = line.split("_")
+    filename = arr_line[0] + '.ccl'
+    year = arr_line[1]
+    month = arr_line[2]
+    day = arr_line[3]
+    file_type = arr_line[5]
+    print('读取ccl文件：' + filename)
+    file = codecs.open("../" + filename, 'r', encoding=file_op.get_encoding("../" + filename))
+    file.seek(0)
+    file_lines = file.readlines()
+
+    print('根据当前点击这行的年月日、文件类型去确定修改文件的哪一行:')
+    for index in range(len(file_lines)):
+        print('第{}行:{}'.format(index, str(file_lines[index])))
+        arr = file_lines[index].split(',')
+        if arr[0] == year and arr[1] == month and arr[2] == day and arr[7].find(file_type) != -1:
+            print('修改之前:' + str(arr))
+            file_lines[index] = '{},{},{},{},{},{},{},{}'.format(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5], 1, arr[7])
+            print('修改之后:' + str(file_lines[index]))
+    print('回写文件')
+    file = open("../" + filename, 'w', encoding='utf8')
+    file.writelines(file_lines)
+    file.flush()
+    # 不关闭，就不能读
+    file.close()
+    print('ccl_op.modify_after_pay over')

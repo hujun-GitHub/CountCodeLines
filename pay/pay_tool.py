@@ -2,15 +2,15 @@ import wx
 import codecs
 import os
 import sys
+import test
 sys.path.append("..")
 import file_op
-import test
-import urllib
+import ccl_op
 
 
 class PayFrame(wx.Frame):
     def __init__(self, *args, **kw):
-        super(PayFrame, self).__init__(*args, **kw, size=(1000,500))
+        super(PayFrame, self).__init__(*args, **kw, size=(1100,500))
 
         self.pnl = wx.Panel(self)
         self.make_main_ui()
@@ -25,7 +25,7 @@ class PayFrame(wx.Frame):
         cost_money = 0
         left_money = 0
         print(upper_folder)
-        wx.StaticText(self.pnl, label="成员\t\t\t\t年\t\t月\t\t日\t\t空白行\t\t注释行\t\t代码行\t\t是否付款", pos=(30, 80), size=(850, 30))
+        wx.StaticText(self.pnl, label="成员\t\t\t\t年\t\t月\t\t日\t\t空白行\t\t注释行\t\t代码行\t\t代码类型\t\t是否付款", pos=(30, 80), size=(1000, 30))
         for filename in os.listdir(upper_folder):
             if os.path.isfile(upper_folder + '/' + filename) and filename.endswith('.ccl'):
                 f = codecs.open(upper_folder + '/' + filename, 'r',
@@ -35,7 +35,7 @@ class PayFrame(wx.Frame):
                 # 遍历文件里每一条记录。
                 for index in range(len(fl)):
                     if len(fl[index].strip()) == 0:
-                        continue;
+                        continue
                     cost_money += self.create_ui_line(filename, fl[index], index_line)
                     index_line += 1
                 left_money = 10000 - cost_money
@@ -49,8 +49,8 @@ class PayFrame(wx.Frame):
     def create_ui_line(self, filename, line, line_number):
         print('create_ui_line:' + line)
         arr_line = line.split(',')
-        dev_name = filename.replace("data_","").replace(".txt", "")
-        label = dev_name + "\t" + arr_line[0] + "\t" + arr_line[1] + "\t" + arr_line[2] + "\t" + arr_line[3]
+        dev_name = filename.replace(".ccl", "")
+        label = dev_name + "_" + arr_line[0] + "_" + arr_line[1] + "_" + arr_line[2] + "_" + arr_line[3] + "_" + arr_line[7]
 
         wx.StaticText(self.pnl, label=dev_name, pos=(30, 120 + line_number * 40), size=(130, 60))
         wx.StaticText(self.pnl, label=arr_line[0], pos=(200, 120 + line_number * 40), size=(100, 60))
@@ -59,10 +59,10 @@ class PayFrame(wx.Frame):
         wx.StaticText(self.pnl, label=arr_line[3], pos=(500, 120 + line_number * 40), size=(100, 60))
         wx.StaticText(self.pnl, label=arr_line[4], pos=(600, 120 + line_number * 40), size=(100, 60))
         wx.StaticText(self.pnl, label=arr_line[5], pos=(700, 120 + line_number * 40), size=(100, 60))
-
+        wx.StaticText(self.pnl, label=arr_line[7], pos=(800, 120 + line_number * 40), size=(100, 60))
         # 最后一列有\t\n,所有取值是要去掉。
         if arr_line[6][0] == '0':
-            btn = wx.Button(self.pnl, label='点击付款', pos=(800, 110 + line_number * 40), size=(80, 30), name=label)
+            btn = wx.Button(self.pnl, label='点击付款', pos=(930, 110 + line_number * 40), size=(80, 30), name=label)
             btn.Bind(event=wx.EVT_BUTTON, handler=self.on_pay)
             return 0
         else:
@@ -94,43 +94,16 @@ class PayFrame(wx.Frame):
         wx.MessageBox("This is a wxPython Hello World sample!", "About Hello World 2", wx.OK | wx.ICON_INFORMATION)
 
     def on_pay(self, event):
+        print('pay_tool.py.on_pay:' + event.EventObject.GetName())
         app = test.App()
+        app.set_txt_line(event.EventObject.GetName(), self)
         app.MainLoop()
-
+        print('pay_tool.py.on_pay over')
 
     def on_pay_(self, event):
 
         if not self.validate_pay():
             return
-
-
-
-        line = event.EventObject.GetName()
-        arr_line = line.split("\t")
-
-        filename = 'data_' + arr_line[0] + '.txt'
-        year = arr_line[1]
-        month = arr_line[2]
-        day = arr_line[3]
-
-        file = codecs.open("../" + filename, 'r', encoding=file_op.get_encoding("../" + filename))
-        file.seek(0)
-        file_lines = file.readlines()
-        # 根据当前点击这行的年月日去确定修改文件的哪一行。
-
-        for index in range(len(file_lines)):
-            l = file_lines[index].split(',')
-            if l[0] == year and l[1] == month and l[2] == day:
-                file_lines[index] = '{},{},{},{},{},{},{}\n'.format(l[0], l[1], l[2], l[3], l[4], l[5], 1)
-
-        # 写入文件
-        file = open("../" + filename, 'w', encoding='utf8')
-        file.writelines(file_lines)
-        file.flush()
-        # 不关闭，就不能读
-        file.close()
-
-        wx.MessageBox("支付状态修改成功！")
 
         self.Destroy()
         frm = PayFrame(None, title='支付小工具')

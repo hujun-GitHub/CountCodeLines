@@ -3,25 +3,56 @@ import urllib.request
 import os
 import file_op
 import requests
-import json
+import sys
+import pay.pay_tool
+sys.path.append("..")
+import ccl_op
 
 
 class Frame(wx.Frame):
     """Frame class that displays an image."""
+    txt_line = ''
+    parent = None
     def __init__(self, image, parent=None, id=-1,
                  pos=wx.DefaultPosition, title='Hello, wxPython!'):
         """Create a Frame instance and display image."""
+        print('test.py.Frame.init:{},txt_line:{}'.format(image, self.txt_line))
         temp = image.ConvertToBitmap()
         size = temp.GetWidth(), temp.GetHeight()
         wx.Frame.__init__(self, parent, id, title, pos, size)
-        panel = wx.Panel(self)
-        self.bmp = wx.StaticBitmap(parent=panel, bitmap=temp)
+        self.panel = wx.Panel(self)
+        self.btn = wx.Button(self.panel, label='完成支付', pos=(0, 325), size=(150, 75))
+        self.btn.Bind(event=wx.EVT_BUTTON, handler=self.on_exist)
+        btn1 = wx.Button(self.panel, label='取消支付', pos=(150, 325), size=(150, 75), name='cancel')
+        btn1.Bind(event=wx.EVT_BUTTON, handler=self.on_cancel)
+
+        self.bmp = wx.StaticBitmap(parent=self.panel, bitmap=temp)
         self.SetClientSize(size)
+
+    def on_exist(self, event):
+        print('完成支付，修改ccl文件状态。')
+        ccl_op.modify_after_pay(event.EventObject.GetName())
+        wx.MessageBox("支付状态修改成功！")
+        self.Close(True)
+        self.parent.Destroy()
+        frm = pay.pay_tool.PayFrame(None, title='支付小工具')
+        frm.Show()
+
+    def on_cancel(self, event):
+        print("取消支付。")
+        self.Close(True)
+        self.Destroy()
+
+    def set_btn_name(self, txt_line, parent):
+        print('test.py.Frame.set_btn_name:' + txt_line + " " + str(parent))
+        self.btn.SetName(txt_line)
+        self.parent = parent
 
 
 class App(wx.App):
     """Application class."""
     def OnInit(self):
+        print('test.App.OnInit:')
         host_name = file_op.get_host_name()
         url = 'http://120.78.227.227/get_pay_img_api?computer_name=' + host_name
 
@@ -44,6 +75,7 @@ class App(wx.App):
 
         image = wx.Image(image_path, wx.BITMAP_TYPE_JPEG)
         image = image.Scale(300, 400)
+
         self.frame = Frame(image)
         self.frame.Show()
         self.SetTopWindow(self.frame)
@@ -51,10 +83,14 @@ class App(wx.App):
         print('图片展示结束')
         return True
 
+    def set_txt_line(self, txt_line, parent):
+        print('test.py.App.set_txt_line:' + txt_line)
+        self.frame.set_btn_name(txt_line,parent)
+
 
 def main():
-    app = App()
-    app.MainLoop()
+    app = App('dddddddddddd')
+    #app.MainLoop()
 
 
 if __name__ == '__main__':
