@@ -31,7 +31,7 @@ def main_process(suffix):
     git_base_path = git_op.get_git_base_path()
     print('===> 计算git根目录下所有{}文件的代码行数'.format(suffix))
     code_total = file_op.count_code(git_base_path, suffix)
-    print('代码行数为：' + str(code_total)) 
+    print('代码行数为：' + str(code_total))
     comment_total = file_op.count_comment(git_base_path, suffix, char_comment)
     print('注释行数为：' + str(comment_total))
     newline_total = file_op.count_newline(git_base_path, suffix)

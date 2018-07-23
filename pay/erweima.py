@@ -1,8 +1,8 @@
 import qrcode
-import file_op
 import wx
 import os
 import requests
+import file_op
 
 
 class Frame(wx.Frame):
@@ -40,6 +40,7 @@ class App(wx.App):
         self.SetTopWindow(self.frame)
         print('展示二维码')
         return True
+
 
 if __name__ == '__main__':
     app = App()

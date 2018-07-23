@@ -17,3 +17,4 @@ def get_git_base_path() -> object:
         print('可能是ubuntu系统,代码没有完成。')
     print("git本地根目录:" + git_base_path)
     return git_base_path
+
