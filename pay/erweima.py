@@ -21,7 +21,7 @@ class Frame(wx.Frame):
 class App(wx.App):
     """Application class."""
     def OnInit(self):
-        host_name = file_op.get_host_name() + '111'
+        host_name = file_op.get_host_name()
         url = 'http://120.78.227.227/is_pay_info_exist?computer_name=' + host_name
         print('判断用户是否已经上传付款二维码:' + url)
         r = requests.get(url)
@@ -41,6 +41,9 @@ class App(wx.App):
         print('展示二维码')
         return True
 
+if __name__ == '__main__':
+    app = App()
+    app.MainLoop()
 
-app = App()
-app.MainLoop()
+
+
