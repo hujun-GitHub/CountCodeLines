@@ -7,9 +7,9 @@ def get_git_base_path() -> object:
     git_base_path = ''
     if system_type.startswith('win'):
         print('程序员的电脑是windows系统。')
-        # git_base_path = os.path.abspath(os.path.join(os.getcwd(), "../../.."))
+        git_base_path = os.path.abspath(os.path.join(os.getcwd(), "../../.."))
         # 本地测试用
-        git_base_path = os.getcwd()
+        #git_base_path = os.getcwd()
     elif system_type == 'darwin':
         print('程序员的电脑是mac系统。')
         git_base_path = os.path.abspath(os.path.join(sys.MEIPASS, "../../.."))

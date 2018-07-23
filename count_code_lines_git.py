@@ -26,7 +26,7 @@ def main():
 
 
 def main_process(suffix):
-    char_comment = config_ini_op.get_config_value(suffix)
+    char_comment = config_ini_op.get_config_value(suffix + '_comment')
     hostname = file_op.get_host_name()
     git_base_path = git_op.get_git_base_path()
     print('===> 计算git根目录下所有{}文件的代码行数'.format(suffix))
