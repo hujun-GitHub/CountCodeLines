@@ -2,8 +2,13 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render,render_to_response
 from django.http import HttpResponse
+from dysms_python import demo_sms_send
 import os
 import pymysql
+import uuid
+import sys
+import random
+
 
 @csrf_exempt
 def test_api(request):
@@ -24,8 +29,20 @@ def img_api(request):
 
     img = request.FILES.get('imgfile') 
     computer_name = request.POST.get('computer_name')
+    tel = request.POST.get('tel')
+    rancode = request.POST.get('rancode')
+    print("rancode=" + rancode)
     if img is None:
-        return render_to_response("hello.html")
+        dic = {}
+        dic['result'] = '没有上传图片'
+        return render_to_response("hello1.html", dic)
+    rancode_session = request.session.get("key","")
+    print('rancode_session=' + str(rancode_session))
+    if rancode != str(rancode_session):
+        dic = {}
+        dic['result'] = '验证码不对'
+        return render_to_response("hello1.html", dic)
+
     
     print('===>判断这个程序员的付款图片是否存在。')
     db = pymysql.connect(host='localhost', port=3306, user='root', passwd='Abc12345~', db='locc_db')
@@ -52,7 +69,9 @@ def img_api(request):
     db.commit()
     db.close()
 
-    return render_to_response("hello1.html")
+    dic = {}
+    dic['result'] = '注册成功'
+    return render_to_response("hello1.html", dic)
 
 @csrf_exempt
 def get_pay_img_api(request):
@@ -86,3 +105,15 @@ def is_pay_info_exist(request):
     else:
         print('记录存在')
         return JsonResponse({"result": "EXIST"})
+
+@csrf_exempt
+def send_sms_test(request):
+    print('send sms')
+    tel = request.GET.get('tel')
+    __business_id = uuid.uuid1()
+    ran_num = random.randint(100000,999999)
+    request.session["key"]=ran_num
+    params = "{\"code\":\"" + str(ran_num) + "\",\"product\":\"123\"}"
+    demo_sms_send.send_sms(__business_id, tel, "胡珺", "SMS_140230003", params)
+    print("tel={} ran_num={}".format(tel, ran_num))
+    return JsonResponse({"result": "SUCCESS"})

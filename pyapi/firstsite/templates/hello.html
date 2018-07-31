@@ -1,10 +1,40 @@
-<h1>Hello World</h1>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
+</head>
 
-<form method="POST" action='/img_api/' enctype="multipart/form-data">
+<body>
+	<form method="POST" action='/img_api/' enctype="multipart/form-data">
 	
 	请上传收款码：<input type="file" name="imgfile">
 	<input type="hidden" name="computer_name" value="{{computer_name}}" />
+	手机号：<input type="text" id="tel" name="tel"><input type="button" id="btnSmsSend" name="btnSmsSend" value="发送验证码" onclick="javascript:sendSms();">   <br/>
+	验证码：<input type="text" id="rancode" name="rancode"> <br/>
 	<input type="submit" name="submit">
 	
 </form>
+
+<script type="text/javascript">
+	function sendSms() {
+		txtTel = document.getElementById('tel');
+		if (!txtTel.value) {
+			alert('请填写手机号!');
+			return;
+		}
+		var xmlhttp;
+		xmlhttp=new XMLHttpRequest();
+		xmlhttp.open("GET","http://120.78.227.227/send_sms?tel="+txtTel.value,true);
+		xmlhttp.send();
+
+		alert('验证码发送成功');
+		btnSmsSend = document.getElementById('btnSmsSend');
+		btnSmsSend.disabled = 'true'
+	}
+</script>
+
+</body>
+
+</html>
+
+
 

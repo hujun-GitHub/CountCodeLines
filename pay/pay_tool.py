@@ -10,7 +10,7 @@ import ccl_op
 
 class PayFrame(wx.Frame):
     def __init__(self, *args, **kw):
-        super(PayFrame, self).__init__(*args, **kw, size=(1100,500))
+        super(PayFrame, self).__init__(*args, **kw, size=(1300,500))
 
         self.pnl = wx.Panel(self)
         self.make_main_ui()
@@ -25,7 +25,8 @@ class PayFrame(wx.Frame):
         cost_money = 0
         left_money = 0
         print(upper_folder)
-        wx.StaticText(self.pnl, label="成员\t\t\t\t年\t\t月\t\t日\t\t空白行\t\t注释行\t\t代码行\t\t代码类型\t\t是否付款", pos=(30, 80), size=(1000, 30))
+        wx.StaticText(self.pnl, label="成员\t\t\t\t年\t\t月\t\t日\t\t空白行\t\t注释行\t\t代码行\t\t代码总行数\t\t代码类型\t\t是否付款", pos=(30, 80), size=(1300, 30))
+        dic_code_total = {}
         for filename in os.listdir(upper_folder):
             if os.path.isfile(upper_folder + '/' + filename) and filename.endswith('.ccl'):
                 f = codecs.open(upper_folder + '/' + filename, 'r',
@@ -36,7 +37,7 @@ class PayFrame(wx.Frame):
                 for index in range(len(fl)):
                     if len(fl[index].strip()) == 0:
                         continue
-                    cost_money += self.create_ui_line(filename, fl[index], index_line)
+                    cost_money += self.create_ui_line(filename, fl[index], index_line, dic_code_total)
                     index_line += 1
                 left_money = 10000 - cost_money
 
@@ -46,27 +47,31 @@ class PayFrame(wx.Frame):
         font.PointSize += 10
         st.SetFont(font)
 
-    def create_ui_line(self, filename, line, line_number):
+    def create_ui_line(self, filename, line, line_number, code_dic_total):
         print('create_ui_line:' + line)
         arr_line = line.split(',')
         dev_name = filename.replace(".ccl", "")
-        label = dev_name + "_" + arr_line[0] + "_" + arr_line[1] + "_" + arr_line[2] + "_" + arr_line[3] + "_" + arr_line[7]
-
+        suffix = arr_line[7].strip('\r')
+        label = dev_name + "_" + arr_line[0] + "_" + arr_line[1] + "_" + arr_line[2] + "_" + arr_line[3] + "_" + suffix
+        if code_dic_total.get(suffix) is None:
+            code_dic_total[suffix] = 0
+        code_dic_total[suffix] += int(arr_line[5])
         wx.StaticText(self.pnl, label=dev_name, pos=(30, 120 + line_number * 40), size=(130, 60))
-        wx.StaticText(self.pnl, label=arr_line[0], pos=(200, 120 + line_number * 40), size=(100, 60))
-        wx.StaticText(self.pnl, label=arr_line[1], pos=(300, 120 + line_number * 40), size=(100, 60))
-        wx.StaticText(self.pnl, label=arr_line[2], pos=(400, 120 + line_number * 40), size=(100, 60))
-        wx.StaticText(self.pnl, label=arr_line[3], pos=(500, 120 + line_number * 40), size=(100, 60))
-        wx.StaticText(self.pnl, label=arr_line[4], pos=(600, 120 + line_number * 40), size=(100, 60))
-        wx.StaticText(self.pnl, label=arr_line[5], pos=(700, 120 + line_number * 40), size=(100, 60))
-        wx.StaticText(self.pnl, label=arr_line[7], pos=(800, 120 + line_number * 40), size=(100, 60))
+        wx.StaticText(self.pnl, label=arr_line[0], pos=(200, 120 + line_number * 40), size=(100, 60))  # year
+        wx.StaticText(self.pnl, label=arr_line[1], pos=(300, 120 + line_number * 40), size=(100, 60))  # month
+        wx.StaticText(self.pnl, label=arr_line[2], pos=(400, 120 + line_number * 40), size=(100, 60))  # day
+        wx.StaticText(self.pnl, label=arr_line[3], pos=(500, 120 + line_number * 40), size=(100, 60))  # blank
+        wx.StaticText(self.pnl, label=arr_line[4], pos=(600, 120 + line_number * 40), size=(100, 60))  # comment
+        wx.StaticText(self.pnl, label=arr_line[5], pos=(700, 120 + line_number * 40), size=(100, 60))  # code
+        wx.StaticText(self.pnl, label=str(code_dic_total[suffix]), pos=(800, 120 + line_number * 40), size=(100, 60))  # code_total
+        wx.StaticText(self.pnl, label=suffix, pos=(960, 120 + line_number * 40), size=(100, 60))  # suffix
         # 最后一列有\t\n,所有取值是要去掉。
         if arr_line[6][0] == '0':
-            btn = wx.Button(self.pnl, label='点击付款', pos=(930, 110 + line_number * 40), size=(80, 30), name=label)
+            btn = wx.Button(self.pnl, label='点击付款', pos=(1080, 110 + line_number * 40), size=(80, 30), name=label)
             btn.Bind(event=wx.EVT_BUTTON, handler=self.on_pay)
             return 0
         else:
-            wx.StaticText(self.pnl, label='已付款' + arr_line[5] + '元', pos=(800, 120 + line_number * 40), size=(80, 30))
+            wx.StaticText(self.pnl, label='已付款' + arr_line[5] + '元', pos=(1080, 120 + line_number * 40), size=(80, 30))
             return int(arr_line[5])
 
     def make_menu_bar(self):
