@@ -66,6 +66,10 @@ def main_process(suffix):
     repo.git.add(ccl_file_curr_user)
     print(ccl_file_curr_user + "文件自动add完毕。")
 
+    print("===>将代码行数统计信息写入数据库")
+    ccl_op.write_to_db(hostname, suffix, push_code, push_newline, push_comment)
+    print("代码行数入库完毕。")
 
 if __name__ == '__main__':
     main()
+

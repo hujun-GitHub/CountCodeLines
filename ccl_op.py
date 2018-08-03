@@ -2,6 +2,9 @@ import datetime
 import codecs
 import file_op
 import os
+import pymysql
+import time
+import datetime
 
 
 def write_user_ccl(ccl_file_curr_user, push_code, push_newline, push_comment, suffix):
@@ -104,3 +107,13 @@ def modify_after_pay(line):
     # 不关闭，就不能读
     file.close()
     print('ccl_op.modify_after_pay over')
+
+
+def write_to_db(hostname, suffix, push_code, push_newline, push_comment):
+    db = pymysql.connect(host='120.78.227.227', port=3306, user='root', passwd='Abc12345~', db='locc_db')
+    cursor = db.cursor()
+    curr_time = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime())
+    #curr_time = datetime.datetime.now()
+    cursor.execute("insert into count_log_t(host_name, code_line, new_line, comment_line, suffix) values('{}', {}, {}, {}, '{}')".format(hostname, push_code, push_newline, push_comment, suffix, curr_time))
+    db.commit()
+    db.close()
