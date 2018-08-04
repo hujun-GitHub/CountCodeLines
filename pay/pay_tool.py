@@ -6,6 +6,7 @@ import test
 sys.path.append("..")
 import file_op
 import ccl_op
+import config_ini_op
 
 
 class PayFrame(wx.Frame):
@@ -52,7 +53,7 @@ class PayFrame(wx.Frame):
         arr_line = line.split(',')
         dev_name = filename.replace(".ccl", "")
         suffix = arr_line[7].strip('\r')
-        label = dev_name + "_" + arr_line[0] + "_" + arr_line[1] + "_" + arr_line[2] + "_" + arr_line[3] + "_" + suffix
+        label = dev_name + "_" + arr_line[0] + "_" + arr_line[1] + "_" + arr_line[2] + "_" + arr_line[5] + "_" + suffix
         if code_dic_total.get(suffix) is None:
             code_dic_total[suffix] = 0
         code_dic_total[suffix] += int(arr_line[5])
@@ -71,7 +72,10 @@ class PayFrame(wx.Frame):
             btn.Bind(event=wx.EVT_BUTTON, handler=self.on_pay)
             return 0
         else:
-            wx.StaticText(self.pnl, label='已付款' + arr_line[5] + '元', pos=(1080, 120 + line_number * 40), size=(80, 30))
+            pay_rate = config_ini_op.get_config_value(os.path.join(os.path.join(os.getcwd(), '..'), 'config.ini'),
+                                                      '{}_pay_rate'.format(suffix))
+            pay_money = round(float(pay_rate) * int(arr_line[5]), 1)
+            wx.StaticText(self.pnl, label='已付款' + str(pay_money) + '元', pos=(1080, 120 + line_number * 40), size=(80, 30))
             return int(arr_line[5])
 
     def make_menu_bar(self):

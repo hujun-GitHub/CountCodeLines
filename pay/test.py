@@ -7,6 +7,7 @@ import sys
 import pay.pay_tool
 sys.path.append("..")
 import ccl_op
+import config_ini_op
 
 
 class Frame(wx.Frame):
@@ -21,6 +22,7 @@ class Frame(wx.Frame):
         size = temp.GetWidth(), temp.GetHeight()
         wx.Frame.__init__(self, parent, id, title, pos, size)
         self.panel = wx.Panel(self)
+
         self.btn = wx.Button(self.panel, label='完成支付', pos=(0, 325), size=(150, 75))
         self.btn.Bind(event=wx.EVT_BUTTON, handler=self.on_exist)
         btn1 = wx.Button(self.panel, label='取消支付', pos=(150, 325), size=(150, 75), name='cancel')
@@ -28,6 +30,10 @@ class Frame(wx.Frame):
 
         self.bmp = wx.StaticBitmap(parent=self.panel, bitmap=temp)
         self.SetClientSize(size)
+
+        self.txt = wx.StaticText(self.panel, label='', pos=(0, 300), size=(300, 30))
+        font = wx.Font(18, wx.DECORATIVE, wx.ITALIC, wx.NORMAL)
+        self.txt.SetFont(font)
 
     def on_exist(self, event):
         print('完成支付，修改ccl文件状态。')
@@ -38,6 +44,7 @@ class Frame(wx.Frame):
         frm = pay.pay_tool.PayFrame(None, title='支付小工具')
         frm.Show()
 
+
     def on_cancel(self, event):
         print("取消支付。")
         self.Close(True)
@@ -46,6 +53,11 @@ class Frame(wx.Frame):
     def set_btn_name(self, txt_line, parent):
         print('test.py.Frame.set_btn_name:' + txt_line + " " + str(parent))
         self.btn.SetName(txt_line)
+        code_line = txt_line.split('_')[4]
+        suffix = txt_line.split('_')[5]
+        pay_rate = config_ini_op.get_config_value(os.path.join(os.path.join(os.getcwd(), '..'),'config.ini'),'{}_pay_rate'.format(suffix))
+        pay_money = round(float(pay_rate) * int(code_line), 1)
+        self.txt.SetLabel('需支付金额: {}元'.format(pay_money))
         self.parent = parent
 
 

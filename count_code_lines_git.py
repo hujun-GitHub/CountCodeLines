@@ -16,17 +16,17 @@ import git
 import ccl_op
 import git_op
 import config_ini_op
-
+import os
 
 def main():
-    supported_suffix_string = str(config_ini_op.get_config_value('supported_suffix'))
+    supported_suffix_string = str(config_ini_op.get_config_value(os.path.join(os.getcwd(), 'config.ini'), 'supported_suffix'))
     supported_suffix_arr = supported_suffix_string.split(',')
     for supported_suffix in supported_suffix_arr:
         main_process(supported_suffix[1:])
 
 
 def main_process(suffix):
-    char_comment = config_ini_op.get_config_value(suffix + '_comment')
+    char_comment = config_ini_op.get_config_value(os.path.join(os.getcwd(), 'config.ini'), suffix + '_comment')
     hostname = file_op.get_host_name()
     git_base_path = git_op.get_git_base_path()
     print('===> 计算git根目录下所有{}文件的代码行数'.format(suffix))

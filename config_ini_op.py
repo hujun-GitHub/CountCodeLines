@@ -1,9 +1,10 @@
 import configparser
 import os
 
-def get_config_value(key):
+def get_config_value(config_file_path, key):
     conf = configparser.ConfigParser()
-    conf.read('config.ini')  # 文件路径
+    print("============="+os.getcwd())
+    conf.read(config_file_path)  # 文件路径
     value = conf.get("sec_a", key)  # 获取指定section 的option值
     return value
 
